@@ -19,6 +19,7 @@ package syncer
 import (
 	"context"
 	"net/url"
+	"strings"
 	"sync"
 
 	jsoniter "github.com/json-iterator/go"
@@ -35,9 +36,11 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
-	ConfigSyncKey      = "kubed.appscode.com/sync"
-	ConfigOriginKey    = "kubed.appscode.com/origin"
-	ConfigSyncContexts = "kubed.appscode.com/sync-contexts"
+	ConfigSyncKey         = "kubed.appscode.com/sync"
+	ConfigOriginKey       = "kubed.appscode.com/origin"
+	ConfigSyncContexts    = "kubed.appscode.com/sync-contexts"
+	ConfigSyncLabels      = "kubed.appscode.com/sync-labels"
+	ConfigSyncAnnotations = "kubed.appscode.com/sync-annotations"
 
 	OriginNameLabelKey      = "kubed.appscode.com/origin.name"
 	OriginNamespaceLabelKey = "kubed.appscode.com/origin.namespace"
@@ -176,4 +179,48 @@ func (s *ConfigSyncer) syncerAnnotations(oldAnnotations, srcAnnotations map[stri
 	newAnnotations[ConfigOriginKey] = string(ref)
 
 	return newAnnotations
+}
+
+func parseInstruction(v string) (key string, value string, valid bool, remove bool) {
+
+	v = strings.TrimSpace(v)
+	if len(v) == 0 {
+		return "", "", false, false
+	}
+
+	i := strings.Index(v, "=")
+	if i < 0 {
+		return v, "", true, true
+	} else if i == 0 {
+		return "", "", false, false
+	}
+
+	return v[0:i], v[i+1:], true, false
+}
+
+func modifyMap(target map[string]string, modifications string) {
+
+	for _, v := range strings.Split(modifications, "\n") {
+		if key, value, valid, remove := parseInstruction(v); valid {
+			if remove {
+				delete(target, key)
+			} else {
+				target[key] = value
+			}
+		}
+	}
+}
+
+func (s *ConfigSyncer) applyFinalizers(targetLabels map[string]string, targetAnnotations map[string]string, srcAnnotations map[string]string) {
+
+	if v, ok := srcAnnotations[ConfigSyncLabels]; ok {
+		delete(targetAnnotations, ConfigSyncLabels)
+		modifyMap(targetLabels, v)
+	}
+
+	if v, ok := srcAnnotations[ConfigSyncAnnotations]; ok {
+		delete(targetAnnotations, ConfigSyncAnnotations)
+		modifyMap(targetAnnotations, v)
+	}
+
 }

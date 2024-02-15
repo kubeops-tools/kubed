@@ -167,6 +167,7 @@ func (s *ConfigSyncer) upsertConfigMap(kc kubernetes.Interface, src *core.Config
 			ResourceVersion: src.ResourceVersion,
 		}
 		obj.Annotations = s.syncerAnnotations(obj.Annotations, src.Annotations, ref)
+		s.applyFinalizers(obj.Labels, obj.Annotations, src.Annotations)
 
 		return obj
 	}, metav1.PatchOptions{})

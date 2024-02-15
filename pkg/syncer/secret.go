@@ -168,6 +168,7 @@ func (s *ConfigSyncer) upsertSecret(kc kubernetes.Interface, src *core.Secret, n
 			ResourceVersion: src.ResourceVersion,
 		}
 		obj.Annotations = s.syncerAnnotations(obj.Annotations, src.Annotations, ref)
+		s.applyFinalizers(obj.Labels, obj.Annotations, src.Annotations)
 
 		return obj
 	}, metav1.PatchOptions{})
