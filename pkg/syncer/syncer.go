@@ -18,7 +18,7 @@ package syncer
 
 import (
 	"context"
-	"net/url"
+	"encoding/base64"
 	"sync"
 
 	jsoniter "github.com/json-iterator/go"
@@ -87,21 +87,7 @@ func (s *ConfigSyncer) Configure(clusterName string, kubeconfigFile string) erro
 			if ctx.Namespace, err = clientcmd_util.NamespaceFromContext(kubeconfigFile, contextName); err != nil {
 				continue
 			}
-
-			u, err := url.Parse(cfg.Host)
-			if err != nil {
-				continue
-			}
-			host := u.Hostname()
-			port := u.Port()
-			if port == "" {
-				if u.Scheme == "https" {
-					port = "443"
-				} else if u.Scheme == "http" {
-					port = "80"
-				}
-			}
-			ctx.Address = host + ":" + port
+			ctx.Address = base64.StdEncoding.EncodeToString([]byte(cfg.Host))
 			s.contexts[contextName] = ctx
 		}
 	}

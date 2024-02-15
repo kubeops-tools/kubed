@@ -143,6 +143,7 @@ func (s *ConfigSyncer) upsertSecret(kc kubernetes.Interface, src *core.Secret, n
 		Name:      src.Name,
 		Namespace: namespace,
 	}
+	klog.Infof("CreateOrPatchSecret cluster: %s", kc.CoreV1().RESTClient().Get().URL())
 	_, _, err := core_util.CreateOrPatchSecret(context.TODO(), kc, meta, func(obj *core.Secret) *core.Secret {
 		// check origin cluster, if not match overwrite and create an event
 		if v, ok := obj.Labels[OriginClusterLabelKey]; ok && v != s.clusterName {
