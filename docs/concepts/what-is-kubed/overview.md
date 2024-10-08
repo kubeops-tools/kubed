@@ -14,6 +14,6 @@ section_menu_id: concepts
 
 # Config Syncer
 
-Config Syncer (pronounced Cube-Dee) by AppsCode is a Kubernetes Cluster Operator Daemon. Config Syncer can do the following things for you:
+Config Syncer (previously Kubed) by AppsCode is a Kubernetes Cluster Operator Daemon. Config Syncer can do the following things for you:
 
  - Config Syncer can keep [ConfigMaps and Secrets synchronized across Namespaces](/docs/guides/config-syncer/).

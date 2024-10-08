@@ -17,7 +17,7 @@ aliases:
 ---
 
 # Config Syncer
-Config Syncer (pronounced Cube-Dee) by AppsCode is a Kubernetes Cluster Operator Daemon. From here you can learn all about Config Syncer's architecture and how to deploy and use Config Syncer.
+Config Syncer (previously Kubed) by AppsCode is a Kubernetes Cluster Operator Daemon. From here you can learn all about Config Syncer's architecture and how to deploy and use Config Syncer.
 
 - [Concepts](/docs/concepts/). Concepts explain some significant aspect of Config Syncer. This is where you can learn about what Config Syncer does and how it does it.
 
